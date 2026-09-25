@@ -1,0 +1,22 @@
+name: Monitor Vespucci
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'  # Esegue la verifica ogni 10 minuti
+  workflow_dispatch:       # Permette di avviare il controllo anche manualmente
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - run: |
+          pip install requests playwright
+          playwright install chromium
+      - env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python main.py
